@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>게시판</title>
+  <link rel="stylesheet" href="style.css">
+  <script>
+    function changePageSize() {
+      var pageSize = document.getElementById("pageSizeSelect").value;
+      // 현재 페이지 번호를 가져오는 로직 추가 필요 (예시에서는 단순화를 위해 생략)
+      var currentPage = 0; // 현재 페이지 번호를 가져오는 로직이 필요
+      window.location.href = '?page=' + currentPage + '&pageSize=' + pageSize;
+    }
+
+  </script>
+</head>
+<body>
+<h1>게시글 목록</h1>
+<div>
+  <a href="/post/form">새 글 작성</a>
+</div>
+<!-- 페이지 사이즈 선택 콤보박스 추가 -->
+<div style="float: right;">
+  <select id="pageSizeSelect" onchange="changePageSize()">
+    <option value="10" th:selected="${pageSize} == 10">10개씩 보기</option>
+    <option value="20" th:selected="${pageSize} == 20">20개씩 보기</option>
+    <option value="30" th:selected="${pageSize} == 30">30개씩 보기</option>
+  </select>
+</div>
+<table>
+  <thead>
+  <tr>
+    <th>글번호</th>
+    <th>제목</th>
+    <th>글쓴이</th>
+    <th>작성시간</th>
+    <th>관리</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="post : ${posts}">
+    <td th:text="${post.id}"></td>
+    <td><a th:href="@{/post/view/{id}(id=${post.id})}" th:text="${post.title}"></a></td>
+    <td th:text="${post.author}"></td>
+    <td th:text="${post.createTime}"></td>
+    <td>
+      <a th:href="@{/post/edit/{id}(id=${post.id})}">수정</a>
+      <a th:href="@{/post/delete/{id}(id=${post.id})}">삭제</a>
+    </td>
+  </tr>
+  </tbody>
+</table>
+<div>
+  <a th:href="@{/(page=${postsPage.number - 1}, pageSize=${postsPage.size})}" th:if="${postsPage.hasPrevious()}">이전 페이지</a>
+  <span>페이지: [[${postsPage.number + 1}]] / [[${postsPage.totalPages}]]</span>
+  <a th:href="@{/(page=${postsPage.number + 1}, pageSize=${postsPage.size})}" th:if="${postsPage.hasNext()}">다음 페이지</a>
+</div>
+
+</body>
+</html>
